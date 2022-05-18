@@ -1,0 +1,56 @@
+import os
+ 
+class BatchRename():
+    '''
+    按顺序批量重命名文件夹中的图片文件
+    '''
+    def __init__(self):
+        self.path = '/home/zhouyue/YOLOX-main/imagestest'  #表示需要命名处理的文件夹！！！！！
+        self.save_path='/home/zhouyue/YOLOX-main/newimages'#保存重命名后图片的文件夹！！！！！
+
+    def sortfiles(self):
+        filelist_afterstrip = []
+        filelist = os.listdir(self.path) #获取图片文件夹下的文件名列表
+
+        for i in filelist:
+            filelist_afterstrip.append(i.strip("0"))
+
+        filelist_afterstrip.sort(key= lambda x:int(x[:-4]))#按文件名进行排序
+        return filelist_afterstrip
+    
+    def rename(self,filelist):
+        total_num = len(filelist) #获取图片数量
+        i = 5544  #表示文件的命名是从005544开始的！！！！！
+        for item in filelist:
+            print(item)
+            if item.endswith('.jpg'):  #初始的图片的格式为jpg格式的（或者源文件是png格式及其他格式，后面的转换格式就可以调整为自己需要的格式即可）
+                
+                #-----------------------------------------------------------#
+                #3表示原文件名数字部分总长为3，记得改成需要的数字！！！！！
+                #-----------------------------------------------------------#
+                len_add = 3 - len(item[:-4])#图片文件名最前面需要补0的个数
+                #-----------------------------------------------------------#
+                
+                str_0_add = ''
+                for k in range(len_add):
+                    str_0_add = str_0_add + '0'
+                src = os.path.join(os.path.abspath(self.path), str_0_add + item)#当前图片绝对路径
+
+                len_str_0 = 6 - len(str(i)) 
+                str_0 = ''
+                for j in range(len_str_0):
+                    str_0 = str_0 + '0'
+                    
+                dst = os.path.join(os.path.abspath(self.save_path), str_0 + str(i) + '.jpg')#处理图片的绝对路径
+                #try:
+                os.rename(src, dst)  #src -- 要修改的目录名，dst -- 修改后的目录名
+                print ('converting %s to %s ...' % (src, dst))
+                i = i + 1
+                #except:
+                    #continue
+        print ('total %d to rename & converted %d jpgs' % (total_num, i))
+ 
+if __name__ == '__main__':
+    batchrename = BatchRename()#实例化类
+    images_list = batchrename.sortfiles()#图片排序
+    batchrename.rename(images_list)#图片重命名
